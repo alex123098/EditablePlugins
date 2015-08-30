@@ -1,0 +1,43 @@
+﻿<Window x:Class="EditableControls.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:editableControls="clr-namespace:EditableControls"
+        xmlns:viewModel="clr-namespace:EditableControls.ViewModel"
+        mc:Ignorable="d"
+        Title="MainWindow" 
+        Height="350" 
+        Width="525"
+        d:DataContext="{d:DesignInstance viewModel:DesignTimeMainViewModel, IsDesignTimeCreatable=True}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        
+        <Button Content="Execute void action" 
+                Margin="10"
+                Command="{Binding ExecuteVoidAction, Mode=OneWay}"/>
+        <Button Content="Execute action with result" 
+                Margin="10" 
+                Grid.Column="1" 
+                Grid.Row="0"
+                Command="{Binding ExecuteResultAction, Mode=OneWay}"/>
+
+        <Button Content="Edit void action"
+                Margin="10"
+                Grid.Column="0"
+                Grid.Row="1"
+                Command="{Binding EditVoidAction, Mode=OneWay}"/>
+        <Button Content="Edit action with result"
+                Margin="10"
+                Grid.Row="1"
+                Grid.Column="1"
+                Command="{Binding EditResultAction, Mode=OneWay}"/>
+    </Grid>
+</Window>
