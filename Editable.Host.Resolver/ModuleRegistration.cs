@@ -17,19 +17,9 @@ namespace Editable.Host.Resolver
         {
             Bind<IPluginLocator>().To<SingleImplementationPluginLocator>().InSingletonScope();
             Bind<IVoidMethodPlugin>().ToProvider<VoidMethodPluginProvider>();
-            Bind(typeof(IVoidMethodPlugin<>)).ToMethod(
-                ctx =>
-                    ((IProvider)ctx.Kernel.Get(typeof(VoidMethodPluginProvider<>)
-                        .MakeGenericType(ctx.GenericArguments))).Create(ctx));
-            Bind(typeof (IMethodPlugin<>)).ToMethod(
-                ctx =>
-                    ((IProvider) ctx.Kernel.Get(typeof (MethodPluginProvider<>)
-                        .MakeGenericType(ctx.GenericArguments))).Create(ctx));
-            Bind(typeof(IMethodPlugin<,>)).ToMethod(
-                ctx =>
-                    ((IProvider)ctx.Kernel.Get(typeof(MethodPluginProvider<,>)
-                        .MakeGenericType(ctx.GenericArguments))).Create(ctx));
-            Bind(typeof (IMethodPlugin<,>)).ToProvider(typeof (MethodPluginProvider<,>));
+            Bind(typeof (IVoidMethodPlugin<>)).ToOpenGenericProvider(typeof (VoidMethodPluginProvider<>));
+            Bind(typeof (IMethodPlugin<>)).ToOpenGenericProvider(typeof (MethodPluginProvider<>));
+            Bind(typeof (IMethodPlugin<,>)).ToOpenGenericProvider(typeof (MethodPluginProvider<,>));
             Bind<IPluginFactory>().ToFactory().InSingletonScope();
         }
     }

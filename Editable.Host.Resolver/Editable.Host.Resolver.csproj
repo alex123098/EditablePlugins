@@ -60,6 +60,7 @@
     <Compile Include="NullObject\DefaultMethodPlugin.cs" />
     <Compile Include="NullObject\DefaultVoidMethodPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResolutionRootExtensions.cs" />
     <Compile Include="SingleImplementationPluginLocator.cs" />
   </ItemGroup>
   <ItemGroup>
