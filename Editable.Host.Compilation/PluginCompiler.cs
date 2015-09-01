@@ -35,7 +35,7 @@ namespace Editable.Host.Compilation
             _sourceReferencesAssembly = assembly;
         }
 
-        public Assembly CompileFrom(string sourceCode)
+        public byte[] CompileFrom(string sourceCode)
         {
             if (string.IsNullOrEmpty(sourceCode))
             {
@@ -55,7 +55,7 @@ namespace Editable.Host.Compilation
                 var compilationResult = compilation.Emit(outputStream);
                 VerifyCompilationResults(compilationResult);
                 outputStream.Seek(0, SeekOrigin.Begin);
-                return Assembly.Load(outputStream.ToArray());
+                return outputStream.ToArray();
             }
         }
 

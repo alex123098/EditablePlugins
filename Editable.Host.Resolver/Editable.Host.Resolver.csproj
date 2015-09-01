@@ -56,9 +56,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppDomainKeeper.cs" />
+    <Compile Include="Marshaling\IProxyTypeLocator.cs" />
+    <Compile Include="Marshaling\ProxyTypeLocator.cs" />
+    <Compile Include="PluginFactory.cs" />
+    <Compile Include="PluginImplementationDescription.cs" />
+    <Compile Include="Marshaling\MethodPluginDecorator.cs" />
+    <Compile Include="Marshaling\VoidMethodPluginDecorator.cs" />
     <Compile Include="ModuleRegistration.cs" />
     <Compile Include="NullObject\DefaultMethodPlugin.cs" />
     <Compile Include="NullObject\DefaultVoidMethodPlugin.cs" />
+    <Compile Include="PluginAssemblyDiscoverer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResolutionRootExtensions.cs" />
     <Compile Include="SingleImplementationPluginLocator.cs" />

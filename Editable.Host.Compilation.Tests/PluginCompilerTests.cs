@@ -38,8 +38,10 @@ namespace Editable.Host.Compilation.Tests
                 => provider.CollectMetadataReferences(It.IsAny<Assembly>()) == mscorlibReference.AsEnumerable()));
 
             var result = compiler.CompileFrom(sourceCode);
+            result.Should().NotBeNull();
+            var assembly = Assembly.Load(result);
 
-            result.Should().DefineType("Test", "Foo").And.Reference(typeof(string).Assembly);
+            assembly.Should().DefineType("Test", "Foo").And.Reference(typeof(string).Assembly);
         }
 
         [Fact]

@@ -4,7 +4,7 @@ namespace Editable.Host.Infrastructure
 {
     public interface IPluginCompiler
     {
-        Assembly CompileFrom(string sourceCode);
+        byte[] CompileFrom(string sourceCode);
 
         void CopyReferencesConfiguration(Assembly assembly);
     }

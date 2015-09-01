@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Editable.Host.Infrastructure;
 using Editable.Infrastructure;
 using JetBrains.Annotations;
@@ -11,41 +10,35 @@ namespace Editable.Host.Resolver
     [UsedImplicitly]
     internal class SingleImplementationPluginLocator : IPluginLocator
     {
-        private class ImplementationDescription
-        {
-            public Type Abstraction { get; }
-            public Type Implementation { get; }
+        private readonly PluginAssemblyDiscoverer _discoverer;
+        private readonly Dictionary<string, ClassLocationInfo> _mappings = new Dictionary<string, ClassLocationInfo>();
 
-            public ImplementationDescription(Type abstraction, Type implementation)
+        public SingleImplementationPluginLocator([NotNull] PluginAssemblyDiscoverer discoverer)
+        {
+            if (discoverer == null)
             {
-                Abstraction = abstraction;
-                Implementation = implementation;
+                throw new ArgumentNullException(nameof(discoverer));
             }
+            _discoverer = discoverer;
         }
 
-        private readonly Dictionary<Type, Type> _mappings = new Dictionary<Type, Type>();
-
-        public void RegisterAssembly([NotNull] Assembly assembly)
+        public void RegisterAssembly([NotNull] byte[] assemblyBytes)
         {
-            if (assembly == null)
+            if (assemblyBytes == null)
             {
-                throw new ArgumentNullException(nameof(assembly));
+                throw new ArgumentNullException(nameof(assemblyBytes));
             }
-            var exportedImplementations = FetchAllPublicImplementations(assembly);
+            var exportedImplementations = _discoverer.GetDeclaredMappings(assemblyBytes);
             foreach (var description in exportedImplementations)
             {
-                _mappings[description.Abstraction] = description.Implementation;
+                _mappings[description.Abstraction] = new ClassLocationInfo(
+                    description.AssemblyName,
+                    description.Implementation,
+                    assemblyBytes);
             }
         }
 
-        private IEnumerable<ImplementationDescription> FetchAllPublicImplementations(Assembly assembly) => 
-            from type in assembly.GetTypes()
-            where !type.IsAbstract && type.IsPublic
-            let pluginContractType = type.GetInterfaces().FirstOrDefault(i => i.HasAttribute<PluginContractAttribute>())
-            where pluginContractType != null
-            select new ImplementationDescription(pluginContractType, type);
-
-        public Type LocateImplementation([NotNull] Type pluginType)
+        public ClassLocationInfo LocateImplementation([NotNull] Type pluginType)
         {
             if (pluginType == null)
             {
@@ -56,20 +49,20 @@ namespace Editable.Host.Resolver
                 throw new ArgumentException("Requested type doesn't describe the plugin contract.", nameof(pluginType));
             }
 
-            Type implementationType;
-            if (_mappings.TryGetValue(pluginType, out implementationType))
+            ClassLocationInfo implementationInfo;
+            if (_mappings.TryGetValue(pluginType.FullName, out implementationInfo))
             {
-                return implementationType;
+                return implementationInfo;
             }
             // check for open generic registration
             if (pluginType.IsConstructedGenericType)
             {
                 var genericDefinition = pluginType.GetGenericTypeDefinition();
-                if (_mappings.TryGetValue(genericDefinition, out implementationType))
+                if (_mappings.TryGetValue(genericDefinition.FullName, out implementationInfo))
                 {
                     var typeParameters = pluginType.GetGenericArguments();
-                    implementationType = implementationType.MakeGenericType(typeParameters);
-                    return implementationType;
+                    implementationInfo.GenericTypeParameters = typeParameters.Select(t => t.FullName).ToArray();
+                    return implementationInfo;
                 }
             }
             return null;

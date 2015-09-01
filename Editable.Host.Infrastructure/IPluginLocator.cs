@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Reflection;
 
 namespace Editable.Host.Infrastructure
 {
     public interface IPluginLocator
     {
-        void RegisterAssembly(Assembly assembly);
+        void RegisterAssembly(byte[] assemblyBytes);
 
-        Type LocateImplementation(Type pluginType);
+        ClassLocationInfo LocateImplementation(Type pluginType);
     }
 }
